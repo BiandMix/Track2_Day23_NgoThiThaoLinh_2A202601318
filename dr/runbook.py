@@ -40,17 +40,44 @@ URL = {"a": "http://127.0.0.1:8001", "b": "http://127.0.0.1:8002"}
 
 def step(n, name, **kw):
     """TODO: ghi 1 dòng {ts, iso, step, name, ...} vào LOG."""
-    raise NotImplementedError
+    LOG.parent.mkdir(parents=True, exist_ok=True)
+    event = {"ts": time.time(), "iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "step": n, "name": name, **kw}
+    with LOG.open("a", encoding="utf-8") as f: f.write(json.dumps(event) + "\n")
+    return event
 
 
 def confirm(auto: bool, msg: str) -> bool:
     """TODO: auto=True -> True; ngược lại hỏi y/N. Đừng bỏ hàm này đi."""
-    raise NotImplementedError
+    return True if auto else input(f"{msg} [y/N] ").strip().lower() == "y"
 
 
 def run(primary: str, target: str, backend: str, auto: bool) -> dict:
     """TODO: 7 bước ở trên."""
-    raise NotImplementedError
+    started = time.time(); checks = {}
+    for r in (primary, target):
+        try: checks[r] = httpx.get(f"{URL[r]}/readyz", timeout=2).status_code
+        except Exception as exc: checks[r] = type(exc).__name__
+    step(1, "xac_nhan_outage", primary=primary, target=target, checks=checks)
+    if not confirm(auto, f"Failover {primary} -> {target}?"):
+        step(2, "thong_bao_incident", cancelled=True); return {"ok": False, "cancelled": True}
+    step(2, "thong_bao_incident", primary=primary, target=target, outage_ts=started)
+    result = fo.failover(target, backend, wait=60)
+    step(3, "scale_gpu_pool", failover_ok=result.get("ok"), result=result)
+    state = result.get("state", {})
+    step(4, "verify_state_replica", count=state.get("count"), weights=state.get("weights"))
+    step(5, "dns_cutover", ok=result.get("ok"), target=target)
+    latencies=[]; errors=0
+    for _ in range(10):
+        t=time.time()
+        try:
+            rr=httpx.get("http://127.0.0.1:8080/v1/infer", timeout=3)
+            if rr.status_code >= 400: errors += 1
+        except Exception: errors += 1
+        latencies.append((time.time()-t)*1000)
+    latencies.sort(); p95=latencies[min(9, max(0, int(len(latencies)*.95)-1))]
+    step(6, "verify_golden_signals", p95_ms=round(p95,1), error_rate=errors/10)
+    final=step(7, "post_incident", elapsed_s=round(time.time()-started,2), rto_command="python tools/measure_rto.py")
+    return {"ok": result.get("ok", False), "failover": result, "runbook": final}
 
 
 if __name__ == "__main__":

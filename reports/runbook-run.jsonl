@@ -1,0 +1,7 @@
+{"ts": 1787654362.5029671, "iso": "2026-08-25T10:39:22Z", "step": 1, "name": "xac_nhan_outage", "primary": "a", "target": "b", "checks": {"a": "ConnectError", "b": "ConnectError"}}
+{"ts": 1787654362.5076993, "iso": "2026-08-25T10:39:22Z", "step": 2, "name": "thong_bao_incident", "primary": "a", "target": "b", "outage_ts": 1787654360.1210477}
+{"ts": 1787654422.8581827, "iso": "2026-08-25T10:40:22Z", "step": 3, "name": "scale_gpu_pool", "failover_ok": false, "result": {"ok": false, "target": "b", "reason": "target_not_ready"}}
+{"ts": 1787654422.8647106, "iso": "2026-08-25T10:40:22Z", "step": 4, "name": "verify_state_replica", "count": null, "weights": null}
+{"ts": 1787654422.8918407, "iso": "2026-08-25T10:40:22Z", "step": 5, "name": "dns_cutover", "ok": false, "target": "b"}
+{"ts": 1787654423.6008217, "iso": "2026-08-25T10:40:23Z", "step": 6, "name": "verify_golden_signals", "p95_ms": 72.2, "error_rate": 1.0}
+{"ts": 1787654423.6047678, "iso": "2026-08-25T10:40:23Z", "step": 7, "name": "post_incident", "elapsed_s": 63.48, "rto_command": "python tools/measure_rto.py"}

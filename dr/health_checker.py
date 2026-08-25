@@ -30,12 +30,40 @@ URL = {"a": "http://127.0.0.1:8001", "b": "http://127.0.0.1:8002"}
 
 def probe(region: str, timeout: float) -> tuple[bool, str]:
     """TODO: trả về (ready, reason). Timeout PHẢI có — netblock làm request treo mãi."""
-    raise NotImplementedError
+    try:
+        r = httpx.get(f"{URL[region]}/readyz", timeout=timeout)
+        data = r.json()
+        if r.status_code == 200 and data.get("ready"):
+            return True, "ready"
+        return False, ";".join(data.get("reasons", [])) or f"http_{r.status_code}"
+    except Exception as exc:
+        return False, type(exc).__name__
 
 
 def run(interval: float, timeout: float, threshold: int, duration: float, out: pathlib.Path):
     """TODO: vòng lặp poll + phát hiện transition + ghi JSONL."""
-    raise NotImplementedError
+    out.parent.mkdir(parents=True, exist_ok=True)
+    states = {r: "HEALTHY" for r in URL}
+    fails = {r: 0 for r in URL}
+    started = time.time()
+    with out.open("a", encoding="utf-8") as fh:
+        while time.time() - started < duration:
+            for region in URL:
+                ready, reason = probe(region, timeout)
+                if ready:
+                    fails[region] = 0; new = "HEALTHY"
+                else:
+                    fails[region] += 1
+                    new = "UNHEALTHY" if fails[region] >= threshold else states[region]
+                if new != states[region]:
+                    event = {"event": "state_change", "ts": time.time(),
+                             "iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                             "region": region, "from": states[region], "to": new,
+                             "reason": reason, "consecutive_fails": fails[region],
+                             "interval_s": interval, "threshold": threshold}
+                    fh.write(json.dumps(event) + "\n"); fh.flush(); print(json.dumps(event))
+                    states[region] = new
+            time.sleep(interval)
 
 
 if __name__ == "__main__":

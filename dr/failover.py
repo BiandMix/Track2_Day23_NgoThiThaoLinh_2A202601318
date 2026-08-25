@@ -36,12 +36,48 @@ LOG = pathlib.Path("reports/failover-events.jsonl")
 
 def emit(**kw):
     """TODO: append 1 dòng JSONL có ts + iso vào LOG, và print ra stdout."""
-    raise NotImplementedError
+    LOG.parent.mkdir(parents=True, exist_ok=True)
+    event = {"ts": time.time(), "iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), **kw}
+    with LOG.open("a", encoding="utf-8") as f: f.write(json.dumps(event) + "\n")
+    print(json.dumps(event)); return event
+
+
+def state_of(region):
+    try:
+        return httpx.get(f"{URL[region]}/v1/state", timeout=2).json()
+    except Exception as exc:
+        return {"region": region, "error": type(exc).__name__, "pool_state": "unknown"}
 
 
 def failover(target: str, backend: str, wait: float) -> dict:
     """TODO: 5 bước ở trên, đúng thứ tự."""
-    raise NotImplementedError
+    primary = "b" if target == "a" else "a"
+    target_db = pathlib.Path(f"state/region-{target}/vectors.sqlite")
+    emit(step="1_verify_target", target=target, state=state_of(target))
+    try:
+        meta = snapshot.get(target, backend)
+        rpo = snapshot.rpo(pathlib.Path(f"state/region-{primary}/vectors.sqlite"), target_db)
+        emit(step="2_restore_snapshot", target=target, rpo_seconds=rpo.get("rpo_seconds"),
+             docs_lost=rpo.get("docs_lost"), embed_model_version=meta.get("embed_model_version"))
+        pathlib.Path(f"state/region-{target}/pool_state").write_text("full\n")
+        emit(step="3_scale_pool", target=target, pool_state="full")
+        started = time.time(); ready = False
+        while time.time() - started < wait:
+            try:
+                resp = httpx.get(f"{URL[target]}/readyz", timeout=2)
+                if resp.status_code == 200 and resp.json().get("ready"):
+                    ready = True; break
+            except Exception:
+                pass
+            time.sleep(0.2)
+        emit(step="4_wait_ready", target=target, ok=ready, waited_s=round(time.time()-started, 2))
+        if not ready: return {"ok": False, "target": target, "reason": "target_not_ready"}
+        pathlib.Path("edge/active_region").write_text(target)
+        emit(step="5_dns_cutover", target=target, ok=True)
+        return {"ok": True, "target": target, "state": state_of(target), "rpo": rpo}
+    except Exception as exc:
+        emit(step="failover_error", target=target, ok=False, error=str(exc))
+        return {"ok": False, "target": target, "error": str(exc)}
 
 
 if __name__ == "__main__":

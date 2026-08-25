@@ -1,0 +1,32 @@
+{"ts": 1787652076.6331334, "iso": "2026-08-25T10:01:16Z", "step": "1_verify_target", "target": "b", "state": {"region": "b", "pool_state": "warm"}}
+{"ts": 1787652076.6331334, "iso": "2026-08-25T10:01:16Z", "step": "2_restore_snapshot", "target": "b", "rpo_seconds": null, "docs_lost": null, "embed_model_version": "test"}
+{"ts": 1787652076.6331334, "iso": "2026-08-25T10:01:16Z", "step": "3_scale_pool", "target": "b", "pool_state": "full"}
+{"ts": 1787652077.642412, "iso": "2026-08-25T10:01:17Z", "step": "4_wait_ready", "target": "b", "ok": false, "waited_s": 1.01}
+{"ts": 1787652145.1003716, "iso": "2026-08-25T10:02:25Z", "step": "1_verify_target", "target": "b", "state": {"region": "b", "pool_state": "warm"}}
+{"ts": 1787652145.1003716, "iso": "2026-08-25T10:02:25Z", "step": "2_restore_snapshot", "target": "b", "rpo_seconds": null, "docs_lost": null, "embed_model_version": "test"}
+{"ts": 1787652145.1095479, "iso": "2026-08-25T10:02:25Z", "step": "3_scale_pool", "target": "b", "pool_state": "full"}
+{"ts": 1787652146.1153297, "iso": "2026-08-25T10:02:26Z", "step": "4_wait_ready", "target": "b", "ok": false, "waited_s": 1.01}
+{"ts": 1787652548.4474554, "iso": "2026-08-25T10:09:08Z", "step": "1_verify_target", "target": "b", "state": {"region": "b", "pool_state": "warm"}}
+{"ts": 1787652548.4545896, "iso": "2026-08-25T10:09:08Z", "step": "2_restore_snapshot", "target": "b", "rpo_seconds": null, "docs_lost": null, "embed_model_version": "test"}
+{"ts": 1787652548.4545896, "iso": "2026-08-25T10:09:08Z", "step": "3_scale_pool", "target": "b", "pool_state": "full"}
+{"ts": 1787652549.4618726, "iso": "2026-08-25T10:09:09Z", "step": "4_wait_ready", "target": "b", "ok": false, "waited_s": 1.0}
+{"ts": 1787652792.0493371, "iso": "2026-08-25T10:13:12Z", "step": "1_verify_target", "target": "b", "state": {"region": "b", "pool_state": "warm"}}
+{"ts": 1787652792.051475, "iso": "2026-08-25T10:13:12Z", "step": "2_restore_snapshot", "target": "b", "rpo_seconds": null, "docs_lost": null, "embed_model_version": "test"}
+{"ts": 1787652792.053409, "iso": "2026-08-25T10:13:12Z", "step": "3_scale_pool", "target": "b", "pool_state": "full"}
+{"ts": 1787652793.0564134, "iso": "2026-08-25T10:13:13Z", "step": "4_wait_ready", "target": "b", "ok": false, "waited_s": 1.0}
+{"ts": 1787652918.6706488, "iso": "2026-08-25T10:15:18Z", "step": "1_verify_target", "target": "b", "state": {"region": "b", "pool_state": "warm"}}
+{"ts": 1787652918.6779993, "iso": "2026-08-25T10:15:18Z", "step": "2_restore_snapshot", "target": "b", "rpo_seconds": null, "docs_lost": null, "embed_model_version": "test"}
+{"ts": 1787652918.679013, "iso": "2026-08-25T10:15:18Z", "step": "3_scale_pool", "target": "b", "pool_state": "full"}
+{"ts": 1787652919.6821012, "iso": "2026-08-25T10:15:19Z", "step": "4_wait_ready", "target": "b", "ok": false, "waited_s": 1.0}
+{"ts": 1787652997.8839214, "iso": "2026-08-25T10:16:37Z", "step": "1_verify_target", "target": "b", "state": {"region": "b", "pool_state": "warm"}}
+{"ts": 1787652997.8839214, "iso": "2026-08-25T10:16:37Z", "step": "2_restore_snapshot", "target": "b", "rpo_seconds": null, "docs_lost": null, "embed_model_version": "test"}
+{"ts": 1787652997.8839214, "iso": "2026-08-25T10:16:37Z", "step": "3_scale_pool", "target": "b", "pool_state": "full"}
+{"ts": 1787652998.89297, "iso": "2026-08-25T10:16:38Z", "step": "4_wait_ready", "target": "b", "ok": false, "waited_s": 1.0}
+{"ts": 1787654362.570501, "iso": "2026-08-25T10:39:22Z", "step": "1_verify_target", "target": "b", "state": {"region": "b", "error": "ConnectError", "pool_state": "unknown"}}
+{"ts": 1787654362.8014636, "iso": "2026-08-25T10:39:22Z", "step": "2_restore_snapshot", "target": "b", "rpo_seconds": 24.01, "docs_lost": 12, "embed_model_version": "embed-model=vi-e5-base@v3"}
+{"ts": 1787654362.8111703, "iso": "2026-08-25T10:39:22Z", "step": "3_scale_pool", "target": "b", "pool_state": "full"}
+{"ts": 1787654422.8516462, "iso": "2026-08-25T10:40:22Z", "step": "4_wait_ready", "target": "b", "ok": false, "waited_s": 60.02}
+{"ts": 1787654435.255136, "iso": "2026-08-25T10:40:35Z", "step": "1_verify_target", "target": "b", "state": {"region": "b", "pool_state": "warm"}}
+{"ts": 1787654435.3153381, "iso": "2026-08-25T10:40:35Z", "step": "2_restore_snapshot", "target": "b", "rpo_seconds": 96.02, "docs_lost": 48, "embed_model_version": "test"}
+{"ts": 1787654435.3255467, "iso": "2026-08-25T10:40:35Z", "step": "3_scale_pool", "target": "b", "pool_state": "full"}
+{"ts": 1787654436.3523548, "iso": "2026-08-25T10:40:36Z", "step": "4_wait_ready", "target": "b", "ok": false, "waited_s": 1.0}
