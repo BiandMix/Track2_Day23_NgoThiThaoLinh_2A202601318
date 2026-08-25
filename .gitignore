@@ -17,3 +17,8 @@ venv/
 .venv-wsl/
 # OS
 .DS_Store
+
+.pytest-tmp/
+.tmp/
+.venv-run/
+.venv-wsl/

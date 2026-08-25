@@ -1,2 +1,1 @@
-{"event": "state_change", "ts": 1787654354.5242658, "iso": "2026-08-25T10:39:14Z", "region": "a", "from": "HEALTHY", "to": "UNHEALTHY", "reason": "ConnectError", "consecutive_fails": 3, "interval_s": 5.0, "threshold": 3}
-{"event": "state_change", "ts": 1787654354.5862212, "iso": "2026-08-25T10:39:14Z", "region": "b", "from": "HEALTHY", "to": "UNHEALTHY", "reason": "ConnectError", "consecutive_fails": 3, "interval_s": 5.0, "threshold": 3}
+{"event": "state_change", "ts": 1787674829.7120628, "iso": "2026-08-25T16:20:29Z", "region": "a", "from": "HEALTHY", "to": "UNHEALTHY", "reason": "ReadTimeout", "consecutive_fails": 3, "interval_s": 5.0, "threshold": 3}

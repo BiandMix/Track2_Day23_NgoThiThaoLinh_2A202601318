@@ -1,7 +1,14 @@
-{"ts": 1787654362.5029671, "iso": "2026-08-25T10:39:22Z", "step": 1, "name": "xac_nhan_outage", "primary": "a", "target": "b", "checks": {"a": "ConnectError", "b": "ConnectError"}}
-{"ts": 1787654362.5076993, "iso": "2026-08-25T10:39:22Z", "step": 2, "name": "thong_bao_incident", "primary": "a", "target": "b", "outage_ts": 1787654360.1210477}
-{"ts": 1787654422.8581827, "iso": "2026-08-25T10:40:22Z", "step": 3, "name": "scale_gpu_pool", "failover_ok": false, "result": {"ok": false, "target": "b", "reason": "target_not_ready"}}
-{"ts": 1787654422.8647106, "iso": "2026-08-25T10:40:22Z", "step": 4, "name": "verify_state_replica", "count": null, "weights": null}
-{"ts": 1787654422.8918407, "iso": "2026-08-25T10:40:22Z", "step": 5, "name": "dns_cutover", "ok": false, "target": "b"}
-{"ts": 1787654423.6008217, "iso": "2026-08-25T10:40:23Z", "step": 6, "name": "verify_golden_signals", "p95_ms": 72.2, "error_rate": 1.0}
-{"ts": 1787654423.6047678, "iso": "2026-08-25T10:40:23Z", "step": 7, "name": "post_incident", "elapsed_s": 63.48, "rto_command": "python tools/measure_rto.py"}
+{"ts": 1787674268.404129, "iso": "2026-08-25T16:11:08Z", "step": 1, "name": "xac_nhan_outage", "primary": "a", "target": "b", "checks": {"a": "ReadTimeout", "b": 503}}
+{"ts": 1787674268.4084918, "iso": "2026-08-25T16:11:08Z", "step": 2, "name": "thong_bao_incident", "primary": "a", "target": "b", "outage_ts": 1787674265.6169162}
+{"ts": 1787674275.110681, "iso": "2026-08-25T16:11:15Z", "step": 3, "name": "scale_gpu_pool", "failover_ok": true, "result": {"ok": true, "target": "b", "state": {"region": "b", "pool_state": "full", "weights": true, "count": 516, "latest_doc_ts": 1787674254.883995, "ts": 1787674275.1085997}, "rpo": {"primary_latest_doc_ts": 1787674266.8855278, "restored_latest_doc_ts": 1787674254.883995, "rpo_seconds": 12.0, "docs_lost": 6}}}
+{"ts": 1787674275.1136773, "iso": "2026-08-25T16:11:15Z", "step": 4, "name": "verify_state_replica", "count": 516, "weights": true}
+{"ts": 1787674275.1345816, "iso": "2026-08-25T16:11:15Z", "step": 5, "name": "dns_cutover", "ok": true, "target": "b"}
+{"ts": 1787674278.1446824, "iso": "2026-08-25T16:11:18Z", "step": 6, "name": "verify_golden_signals", "p95_ms": 176.0, "error_rate": 0.1}
+{"ts": 1787674278.1475885, "iso": "2026-08-25T16:11:18Z", "step": 7, "name": "post_incident", "elapsed_s": 12.53, "rto_command": "python tools/measure_rto.py"}
+{"ts": 1787674832.14917, "iso": "2026-08-25T16:20:32Z", "step": 1, "name": "xac_nhan_outage", "primary": "a", "target": "b", "checks": {"a": "ReadTimeout", "b": 200}}
+{"ts": 1787674832.1558285, "iso": "2026-08-25T16:20:32Z", "step": 2, "name": "thong_bao_incident", "primary": "a", "target": "b", "outage_ts": 1787674829.0427933}
+{"ts": 1787674832.7836413, "iso": "2026-08-25T16:20:32Z", "step": 3, "name": "scale_gpu_pool", "failover_ok": true, "result": {"ok": true, "target": "b", "state": {"region": "b", "pool_state": "full", "weights": true, "count": 591, "latest_doc_ts": 1787674818.995465, "ts": 1787674832.7808366}, "rpo": {"primary_latest_doc_ts": 1787674830.9975395, "restored_latest_doc_ts": 1787674818.995465, "rpo_seconds": 12.0, "docs_lost": 6}}}
+{"ts": 1787674832.7902899, "iso": "2026-08-25T16:20:32Z", "step": 4, "name": "verify_state_replica", "count": 591, "weights": true}
+{"ts": 1787674832.8200514, "iso": "2026-08-25T16:20:32Z", "step": 5, "name": "dns_cutover", "ok": true, "target": "b"}
+{"ts": 1787674834.3461053, "iso": "2026-08-25T16:20:34Z", "step": 6, "name": "verify_golden_signals", "p95_ms": 190.1, "error_rate": 0.0}
+{"ts": 1787674834.3514237, "iso": "2026-08-25T16:20:34Z", "step": 7, "name": "post_incident", "elapsed_s": 5.31, "rto_command": "python tools/measure_rto.py"}

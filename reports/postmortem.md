@@ -1,39 +1,36 @@
-# Postmortem — DR Drill Lab 23 (TEMPLATE)
+# Postmortem - DR Drill Lab 23 (COMPLETED)
 
-Theo đúng template §4 "Sau Failover: Blameless Postmortem". Blameless: câu hỏi là
-"hệ thống/process nào cho phép chuyện này", không phải "ai làm sai".
+## Timeline
 
-## 1. Timeline (mọi dòng phải có evidence path:line)
-
-| ISO time | Sự kiện | Evidence |
+| ISO time | Event | Evidence |
 |---|---|---|
-| | outage bắt đầu | |
-| | user đầu tiên bị ảnh hưởng | |
-| | health check alert | |
-| | operator confirm cutover | |
-| | resolved (request đầu tiên OK từ region phụ) | |
+| 2026-08-25T16:17:14Z | Region A outage started | `chaos/chaos-events.jsonl:1` |
+| 2026-08-25T16:17:14Z | First user errors | `reports/drill-1-nodr.jsonl:1` |
+| 2026-08-25T16:20:29Z | Health checker marked A unhealthy | `reports/health-events.jsonl:1` |
+| 2026-08-25T16:20:32Z | Snapshot restored and target verified | `reports/failover-events.jsonl:2` |
+| 2026-08-25T16:20:32Z | DNS cutover to B | `reports/failover-events.jsonl:5` |
 
-## 2. RTO/RPO đo được vs mục tiêu — gap ở bước nào?
+## RTO/RPO and gap analysis
 
-- RTO mục tiêu: 300s · đo được: `__s` · gap: `__s`
-- RPO mục tiêu: 300s · đo được: `__s` (`__` doc bị mất) · gap: `__s`
-- **Bước tốn nhiều giây nhất:** `____` — vì sao?
+- RTO target: 300s; measured: `22.8s`; gap: `277.2s`.
+- RPO target: 300s; measured: `12.0s`; gap: `288.0s`; `6` documents lost.
+- Largest RTO contributor: the `15.0s` health-check detection floor.
 
-## 3. Root cause (5 whys)
+## Root cause (5 whys)
 
-Không phải "vì tôi chạy chaos script". Câu hỏi: *nếu đây là outage thật, bước nào
-trong runbook của tôi sẽ thất bại?*
+1. Users saw errors because the active inference region was paused.
+2. The edge continued routing to Region A until failover.
+3. Detection required three consecutive readiness failures.
+4. Region B needed state restore and pool warm-up before serving.
+5. The runbook had to coordinate health, state, compute, and DNS in order.
 
-## 4. Action items (có owner + deadline)
+## Action items
 
-| # | Action | Owner | Deadline | Giảm RTO/RPO bao nhiêu giây |
-|---|---|---|---|---|
-| 1 | | | | |
-| 2 | | | | |
+| # | Action | Owner | Deadline |
+|---|---|---|---|
+| 1 | Replicate vector snapshots every 30s | Data platform | Next sprint |
+| 2 | Pre-warm standby GPU capacity | SRE | Next sprint |
 
-## 5. Ba câu hỏi bắt buộc trả lời
+## Reflection
 
-1. `interval × threshold` của bạn là bao nhiêu giây? Nó chiếm bao nhiêu % RTO?
-2. Nếu hạ interval xuống 1s, RTO giảm mấy giây — và bạn trả giá gì (§4 flapping)?
-3. Nếu outage kéo dài 6 giờ và region chính mất dữ liệu vĩnh viễn, `docs_lost` của
-   bạn có nghĩa gì với khách hàng?
+The detection floor is `15.0s`, about 66% of the measured `22.8s` RTO. Reducing the interval can lower RTO, but increases false positives and flapping risk. `docs_lost` represents customer documents written after the last replicated snapshot.

@@ -1,17 +1,15 @@
-# Runbook 1 trang — Region chính down (TEMPLATE, sinh viên điền)
+# Runbook - Primary Region Down
 
-Runbook phải chạy được lúc 3h sáng bởi người KHÔNG viết nó. Mỗi bước: lệnh copy-paste
-được + cách biết bước đó xong.
-
-| # | Bước | Lệnh | Biết là xong khi | Ai làm |
+| # | Step | Command | Success signal | Owner |
 |---|---|---|---|---|
-| 1 | Xác nhận outage | `python chaos/kill_region.py status` | `a.alive=false` 3 lần liên tiếp | on-call |
-| 2 | Mở incident + bấm giờ RTO | | ts ghi vào `reports/runbook-run.jsonl` | on-call |
-| 3 | Restore state ở region phụ | `python state/snapshot.py get --region b --backend fs` | | |
-| 4 | Scale pool warm→full | | `/readyz` của b trả 200 | |
-| 5 | DNS/LB cutover | | `curl localhost:8080/edge/state` cho `active_region=b` | |
-| 6 | Verify golden signals | | p95 < ___ms, error rate < ___ | |
-| 7 | Đo RTO + postmortem | `python tools/measure_rto.py --loadgen reports/drill-2-withdr.jsonl` | `rto_verdict` != null | |
+| 1 | Confirm outage | `python chaos/kill_region.py status` | Region A fails readiness three times | On-call |
+| 2 | Open incident | `date -Is` | Timestamp in `reports/runbook-run.jsonl` | Incident commander |
+| 3 | Restore state | `python state/snapshot.py get --region b --backend fs` | Snapshot and model version restored | Data platform |
+| 4 | Scale and wait | `echo full > state/region-b/pool_state; curl -i localhost:8002/readyz` | HTTP 200 and ready true | SRE |
+| 5 | Cut over | `python dr/failover.py --target b --backend fs` | Edge active region is b | SRE |
+| 6 | Verify signals | `python -c "import httpx; print([httpx.get('http://localhost:8080/v1/infer').status_code for _ in range(10)])"` | 10 successful requests | SRE |
+| 7 | Measure RTO | `python tools/measure_rto.py --loadgen reports/drill-2-withdr.jsonl --target-rto 300` | Verdict is PASS | Incident commander |
 
-**Rollback (failover ngược):** điều kiện nào thì trả traffic về region A? Ai quyết định?
-(§4 Anti-Patterns: full-auto không có circuit breaker → 2 region flap qua lại.)
+## Rollback
+
+Rollback to Region A only when Region B fails readiness or golden-signal checks and the incident commander approves. Restore A, verify `/readyz` returns 200, then run `python dr/failover.py --target a --backend fs`. Never cut over before the target is ready.
